@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Course Project Report - Kerberos AS Exchange Simulation</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 8mm 12mm 8mm 12mm;
+  }
+  * {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    color: #1e293b;
+    background: #ffffff;
+    font-size: 8.4pt;
+    line-height: 1.30;
+  }
+  .report-page {
+    width: 100%;
+    height: 278mm;
+    max-height: 278mm;
+    page-break-after: always;
+    break-after: page;
+    position: relative;
+    padding-bottom: 9mm;
+    overflow: hidden;
+  }
+  .report-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+  
+  /* Running Header */
+  .page-header {
+    border-bottom: 1.5px solid #1e3a8a;
+    padding-bottom: 1.5mm;
+    margin-bottom: 2mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 7pt;
+    font-weight: 700;
+    color: #1e3a8a;
+    letter-spacing: 0.3px;
+  }
+  .page-header .left {
+    text-transform: uppercase;
+  }
+  .page-header .right {
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  /* Running Footer */
+  .page-footer {
+    position: absolute;
+    bottom: 0mm;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #cbd5e1;
+    padding-top: 1.5mm;
+    display: flex;
+    justify-content: space-between;
+    font-size: 7pt;
+    color: #64748b;
+  }
+  .page-footer .left {
+    font-weight: 600;
+  }
+
+  /* Headings */
+  h2.section-title {
+    font-size: 10.5pt;
+    font-weight: 800;
+    color: #1e3a8a;
+    border-bottom: 1.2px solid #e2e8f0;
+    padding-bottom: 0.8mm;
+    margin: 1.5mm 0 1.2mm 0;
+    display: flex;
+    align-items: center;
+  }
+  h2.section-title .sec-num {
+    background: #1e3a8a;
+    color: #fff;
+    padding: 0.4mm 1.8mm;
+    border-radius: 2px;
+    font-size: 8pt;
+    margin-right: 1.8mm;
+  }
+  h3.sub-title {
+    font-size: 8.8pt;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 1.2mm 0 0.8mm 0;
+  }
+
+  /* Text & Paragraphs */
+  p {
+    margin: 0 0 1.2mm 0;
+    text-align: justify;
+  }
+  ul, ol {
+    margin: 0 0 1.2mm 0;
+    padding-left: 4.2mm;
+  }
+  li {
+    margin-bottom: 0.6mm;
+  }
+
+  /* Tables */
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.2mm 0 1.5mm 0;
+    font-size: 7.6pt;
+  }
+  table.data-table th, table.data-table td {
+    border: 1px solid #cbd5e1;
+    padding: 1mm 1.8mm;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.data-table th {
+    background: #f1f5f9;
+    font-weight: 700;
+    color: #1e293b;
+  }
+  table.data-table tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  /* Code Snippet Boxes */
+  .code-block {
+    background: #0f172a;
+    color: #f8fafc;
+    border-radius: 3px;
+    padding: 1.8mm 2.2mm;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 7pt;
+    line-height: 1.32;
+    margin: 1mm 0 0.8mm 0;
+    border: 1px solid #334155;
+    overflow: hidden;
+    white-space: pre-wrap;
+  }
+  .code-kw { color: #f43f5e; font-weight: 600; }
+  .code-fn { color: #38bdf8; }
+  .code-str { color: #a3e635; }
+  .code-com { color: #94a3b8; font-style: italic; }
+  .code-num { color: #fb923c; }
+
+  /* Info / Callout Boxes */
+  .callout-box {
+    background: #eff6ff;
+    border-left: 3px solid #2563eb;
+    padding: 1.5mm 2.2mm;
+    margin: 1.2mm 0;
+    font-size: 7.8pt;
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 0.2mm 1.2mm;
+    border-radius: 2px;
+    font-size: 6.8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .badge-pass { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .badge-fail { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+  /* Two Column Layout */
+  .two-col {
+    display: flex;
+    gap: 2.5mm;
+    margin-bottom: 1.2mm;
+  }
+  .two-col > div {
+    flex: 1;
+  }
+
+  /* Page 1 Specific Styles */
+  .title-college-header {
+    text-align: center;
+    border-bottom: 2px solid #1e3a8a;
+    padding-bottom: 2.5mm;
+    margin-bottom: 3.5mm;
+  }
+  .title-college-name {
+    font-size: 15pt;
+    font-weight: 900;
+    color: #1e3a8a;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1mm;
+  }
+  .title-college-sub {
+    font-size: 7.8pt;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 1.2mm;
+  }
+  .title-dept-name {
+    font-size: 10.5pt;
+    font-weight: 800;
+    color: #0f172a;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .title-hero-box {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    color: #ffffff;
+    border-radius: 4px;
+    padding: 5mm 3.5mm;
+    text-align: center;
+    margin: 3.5mm 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .title-hero-course {
+    font-size: 9pt;
+    font-weight: 600;
+    color: #93c5fd;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 1.5mm;
+  }
+  .title-hero-main {
+    font-size: 16pt;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 0.2px;
+    margin-bottom: 1.5mm;
+  }
+  .title-hero-sub {
+    font-size: 8.5pt;
+    color: #e2e8f0;
+    font-weight: 400;
+  }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5mm;
+    margin: 3.5mm 0;
+  }
+  .meta-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 3px;
+    padding: 2mm 2.5mm;
+  }
+  .meta-card-title {
+    font-size: 7.2pt;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-bottom: 1.2mm;
+  }
+  .student-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7.8pt;
+  }
+  .student-table td {
+    padding: 1mm 0.8mm;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .sign-grid {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8mm;
+    padding: 0 3mm;
+  }
+  .sign-box {
+    text-align: center;
+    width: 48mm;
+  }
+  .sign-line {
+    border-top: 1px solid #0f172a;
+    margin-top: 9mm;
+    margin-bottom: 1mm;
+  }
+  .sign-label {
+    font-size: 7.8pt;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .sign-sub {
+    font-size: 6.8pt;
+    color: #64748b;
+  }
+</style>
+</head>
+<body>
+
+<!-- ========================================================================== -->
+<!-- PAGE 1: TITLE PAGE -->
+<!-- ========================================================================== -->
+<div class="report-page" id="page-1">
+  <div class="title-college-header">
+    <div class="title-college-name">Canara Engineering College</div>
+    <div class="title-college-sub">Benjanapadavu, Bantwal Taluk, Mangaluru, D.K. – 574219<br>(Affiliated to Visvesvaraya Technological University, Belagavi)</div>
+    <div class="title-dept-name">Department of Computer Science &amp; Engineering</div>
+  </div>
+
+  <div style="text-align: center; margin: 1.5mm 0 1mm 0;">
+    <span style="font-size: 7.5pt; font-weight: 700; letter-spacing: 1px; color: #475569; text-transform: uppercase; background: #f1f5f9; padding: 0.8mm 2.5mm; border-radius: 2px;">Course Project Assignment Report</span>
+  </div>
+
+  <div class="title-hero-box">
+    <div class="title-hero-course">Cryptography &amp; Network Security (BCS703) — Semester VII (B.E. CSE)</div>
+    <div class="title-hero-main">KERBEROS AS EXCHANGE SIMULATION</div>
+    <div class="title-hero-sub">An Educational Full-Stack Software Simulation of Initial Single Sign-On Authentication</div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-card">
+      <div class="meta-card-title">Project Identification</div>
+      <table class="student-table">
+        <tr><td style="font-weight: 700; width: 45%;">Project Group:</td><td><strong>G17</strong></td></tr>
+        <tr><td style="font-weight: 700;">Project Number:</td><td><strong>P17</strong></td></tr>
+        <tr><td style="font-weight: 700;">Course / Code:</td><td>CNS / BCS703</td></tr>
+        <tr><td style="font-weight: 700;">Academic Year:</td><td>2025 – 2026</td></tr>
+        <tr><td style="font-weight: 700;">Software Version:</td><td>v2.0 (FastAPI + React)</td></tr>
+      </table>
+    </div>
+
+    <div class="meta-card">
+      <div class="meta-card-title">Student Details &amp; Contributions</div>
+      <table class="student-table">
+        <tr>
+          <td><strong>4CB23CS161</strong><br><span style="font-size:6.8pt; color:#475569;">Member 1</span></td>
+          <td>Backend Architecture, Cryptographic Engineering, Testing, KDC Service Engine</td>
+        </tr>
+        <tr>
+          <td><strong>4CB23CS160</strong><br><span style="font-size:6.8pt; color:#475569;">Member 2</span></td>
+          <td>Frontend Architecture, Glassmorphic UI, Protocol Telemetry, API Integration</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout-box" style="margin: 2.5mm 0 2mm 0;">
+    <strong>Academic Scope &amp; Disclaimer:</strong> This course project report documents an educational software simulation developed for the course Cryptography &amp; Network Security (BCS703). The simulation demonstrates the initial Authentication Server (AS) exchange of the Kerberos V5 protocol (RFC 4120) using modern REST/JSON transport and standard cryptography (PBKDF2-HMAC-SHA256, AES-256-GCM). It is engineered for transparent classroom visualization and does not claim RFC 4120 binary ASN.1 wire compatibility.
+  </div>
+
+  <div class="sign-grid">
+    <div class="sign-box">
+      <div class="sign-line"></div>
+      <div class="sign-label">Course Coordinator</div>
+      <div class="sign-sub">Dept. of Computer Science &amp; Engg.</div>
+    </div>
+    <div class="sign-box">
+      <div class="sign-line"></div>
+      <div class="sign-label">Head of Department (HOD)</div>
+      <div class="sign-sub">Dept. of Computer Science &amp; Engg.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="left">Canara Engineering College | Dept. of CSE | BCS703</div>
+    <div class="right">Page 1 of 8</div>
+  </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- PAGE 2: DESCRIPTION OF REQUIREMENTS -->
+<!-- ========================================================================== -->
+<div class="report-page" id="page-2">
+  <div class="page-header">
+    <div class="left">Part 1: Description of Requirements</div>
+    <div class="right">BCS703 Course Project Report | Group G17</div>
+  </div>
+
+  <h2 class="section-title"><span class="sec-num">1</span>Description of Requirements</h2>
+
+  <h3 class="sub-title">1.1 Introduction to Kerberos &amp; The Authentication Server (AS) Exchange</h3>
+  <p>
+    Kerberos is a centralized, trusted third-party network authentication protocol originated at MIT (RFC 4120). Designed around the classical "three-headed dog" architectural model, Kerberos establishes mutual authentication across three entities: the <strong>Client</strong>, the <strong>Key Distribution Center (KDC)</strong>, and the <strong>Application Server</strong>. The KDC houses two functional servers: the Authentication Server (AS) and the Ticket Granting Server (TGS). The <strong>Authentication Server (AS) Exchange</strong> constitutes Phase 1 of the Kerberos protocol—the foundational gateway where a client proves its identity without ever transmitting passwords across the network, thereby obtaining a Ticket Granting Ticket (TGT) and an ephemeral session key ($K_{C,TGS}$).
+  </p>
+
+  <h3 class="sub-title">1.2 Problem Statement &amp; Motivation</h3>
+  <p>
+    Traditional distributed login mechanisms transmit credentials or static hashes over insecure channels, exposing networks to eavesdropping, packet sniffing, pass-the-hash attacks, and password replay. Enterprise Kerberos implementations (e.g., Microsoft Active Directory, MIT Kerberos) provide robust defense but operate as opaque binary black boxes over binary ASN.1 DER streams on UDP/TCP port 88. For undergraduate computer science students, tracing individual keys, timestamps, nonces, and ticket structures inside these production streams is exceedingly difficult. <strong>Motivation:</strong> To design and implement a full-stack, transparent, and cryptographically verified educational simulation that visualizes every step of the AS exchange in real time.
+  </p>
+
+  <h3 class="sub-title">1.3 Project Objectives</h3>
+  <ul>
+    <li><strong>Protocol Mechanics:</strong> Implement standard RFC 4120 Authentication Server semantics (`KRB_AS_REQ` and `KRB_AS_REP`).</li>
+    <li><strong>Cryptographic Grounding:</strong> Integrate PBKDF2-HMAC-SHA256 (100,000 iterations) for string-to-key derivation and authenticated AES-256-GCM with unique 96-bit random IVs for ticket confidentiality and tamper-evident integrity.</li>
+    <li><strong>Replay &amp; Request Correlation:</strong> Enforce client nonces ($N_1$) for request-response matching and server-side UTC clock-skew validation ($\pm 300\text{s}$).</li>
+    <li><strong>Interactive Visual Telemetry:</strong> Construct a responsive React dashboard demonstrating 8-step live telemetry progression.</li>
+    <li><strong>Formal Verification:</strong> Provide automated test coverage across frontend and backend tiers (21 verified automated tests).</li>
+  </ul>
+
+  <h3 class="sub-title">1.4 Functional &amp; Non-Functional Requirements</h3>
+  <div class="two-col">
+    <div>
+      <table class="data-table">
+        <thead><tr><th style="width:20%;">Req ID</th><th>Functional Requirement (FR)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>FR-1</strong></td><td>Client request generation with principal, realm, service, nonce, timestamp, and lifetime.</td></tr>
+          <tr><td><strong>FR-2</strong></td><td>Server-side validation of realm, service, and clock skew freshness ($\le 300\text{s}$).</td></tr>
+          <tr><td><strong>FR-3</strong></td><td>KDC user lookup and client key derivation ($K_C$) via PBKDF2; error mapping if unknown.</td></tr>
+          <tr><td><strong>FR-4</strong></td><td>Plaintext TGT assembly and encryption using master key $K_{TGS}$ via AES-256-GCM.</td></tr>
+          <tr><td><strong>FR-5</strong></td><td>Client package construction and encryption using $K_C$ with session key and nonce echo.</td></tr>
+          <tr><td><strong>FR-6</strong></td><td>Structured RFC error emission (`KDC_ERR_C_PRINCIPAL_UNKNOWN`, `KRB_AP_ERR_SKEW`).</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <table class="data-table">
+        <thead><tr><th style="width:22%;">Req ID</th><th>Non-Functional Requirement (NFR)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>NFR-1</strong></td><td><strong>Confidentiality:</strong> Zero plain passwords, salts, or master keys in API JSON payloads.</td></tr>
+          <tr><td><strong>NFR-2</strong></td><td><strong>Integrity:</strong> AES-GCM 128-bit authentication tags; tamper attempts throw `InvalidTag`.</td></tr>
+          <tr><td><strong>NFR-3</strong></td><td><strong>Replay Defense:</strong> Multi-factor protection via nonces, timestamps, and ticket lifetimes.</td></tr>
+          <tr><td><strong>NFR-4</strong></td><td><strong>Performance:</strong> Sub-50ms server response latency for cryptographic processing.</td></tr>
+          <tr><td><strong>NFR-5</strong></td><td><strong>Testability:</strong> Fully automated unit and integration suites with 100% pass rates.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h3 class="sub-title">1.5 System Environment &amp; Project Limitations</h3>
+  <p>
+    <strong>Environment:</strong> Python 3.12, FastAPI, Pydantic V2, PyCA Cryptography, Node.js v18+, React 18, Vite, Vitest, Pytest.<br>
+    <strong>Limitations:</strong> Focus is confined to the initial AS Exchange (Phase 1). Subsequent TGS service ticket exchanges (Phase 2) and AP mutual authentication (Phase 3) constitute future extensions. Transport utilizes JSON/REST over HTTP rather than raw ASN.1 over UDP port 88.
+  </p>
+
+  <div class="page-footer">
+    <div class="left">Canara Engineering College | Dept. of CSE | BCS703</div>
+    <div class="right">Page 2 of 8</div>
+  </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- PAGE 3: SYSTEM DESIGN & ARCHITECTURE -->
+<!-- ========================================================================== -->
+<div class="report-page" id="page-3">
+  <div class="page-header">
+    <div class="left">Part 2: Design Diagram &amp; Architecture</div>
+    <div class="right">BCS703 Course Project Report | Group G17</div>
+  </div>
+
+  <h2 class="section-title"><span class="sec-num">2</span>System Design &amp; Architecture</h2>
+
+  <h3 class="sub-title">2.1 Architectural Overview</h3>
+  <p>
+    The simulation implements a decoupled, full-stack client-server architecture designed around strict boundaries of cryptographic isolation. The client application models a user workstation requiring authentication. The server application acts as the KDC Authentication Server. Communication occurs over standard HTTP REST endpoints with strict JSON schemas. Sensitive cryptographic secrets (user master passwords, derived encryption keys, and unencrypted session keys) are strictly contained within their respective trust domains and never cross the wire.
+  </p>
+
+  <h3 class="sub-title">2.2 System Architecture Diagram</h3>
+  <div style="text-align: center; margin: 1.5mm 0;">
+    <svg width="100%" height="142mm" viewBox="0 0 760 380" xmlns="http://www.w3.org/2000/svg" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:4px;">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1 L 10 5 L 0 9 z" fill="#1e3a8a" />
+        </marker>
+        <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1 L 10 5 L 0 9 z" fill="#059669" />
+        </marker>
+      </defs>
+
+      <!-- CLIENT CONTAINER -->
+      <rect x="20" y="20" width="220" height="340" rx="6" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5" />
+      <rect x="20" y="20" width="220" height="32" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" />
+      <text x="130" y="42" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#1e3a8a" text-anchor="middle">CLIENT WORKSTATION (React)</text>
+
+      <rect x="35" y="65" width="190" height="60" rx="4" fill="#f8fafc" stroke="#94a3b8" />
+      <text x="130" y="83" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="700" fill="#0f172a" text-anchor="middle">ClientRequestForm.jsx</text>
+      <text x="130" y="98" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">Principal Selection &amp; Nonce Gen ($N_1$)</text>
+      <text x="130" y="112" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">Timestamp ($T$) &amp; Lifetime Input</text>
+
+      <rect x="35" y="140" width="190" height="60" rx="4" fill="#f8fafc" stroke="#94a3b8" />
+      <text x="130" y="158" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="700" fill="#0f172a" text-anchor="middle">ProtocolSteps.jsx</text>
+      <text x="130" y="173" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">8-Step Visual Telemetry Stepper</text>
+      <text x="130" y="187" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">Completed / Pending / Failed States</text>
+
+      <rect x="35" y="215" width="190" height="65" rx="4" fill="#f8fafc" stroke="#94a3b8" />
+      <text x="130" y="233" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="700" fill="#0f172a" text-anchor="middle">PacketViewer.jsx</text>
+      <text x="130" y="248" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">Metadata &amp; Ciphertext Inspector</text>
+      <text x="130" y="262" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">Encrypted TGT &amp; Client Part</text>
+
+      <rect x="35" y="295" width="190" height="45" rx="4" fill="#eff6ff" stroke="#3b82f6" />
+      <text x="130" y="313" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="700" fill="#1e3a8a" text-anchor="middle">api.js (API Client Service)</text>
+      <text x="130" y="327" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">Dual Mode: Live REST / Mock Fallback</text>
+
+      <!-- NETWORK BUS -->
+      <line x1="240" y1="180" x2="310" y2="180" stroke="#1e3a8a" stroke-width="2" marker-end="url(#arrow)" />
+      <text x="275" y="170" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="700" fill="#1e3a8a" text-anchor="middle">KRB_AS_REQ</text>
+      <text x="275" y="195" font-family="'Segoe UI', sans-serif" font-size="6.5" fill="#64748b" text-anchor="middle">(Cleartext ID + Nonce)</text>
+
+      <line x1="310" y1="230" x2="240" y2="230" stroke="#059669" stroke-width="2" marker-end="url(#arrow-green)" />
+      <text x="275" y="222" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="700" fill="#059669" text-anchor="middle">KRB_AS_REP</text>
+      <text x="275" y="244" font-family="'Segoe UI', sans-serif" font-size="6.5" fill="#64748b" text-anchor="middle">(Encrypted TGT + EncPart)</text>
+
+      <!-- SERVER CONTAINER -->
+      <rect x="310" y="20" width="430" height="340" rx="6" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.5" />
+      <rect x="310" y="20" width="430" height="32" rx="6" fill="#f1f5f9" stroke="#1e3a8a" stroke-width="1.5" />
+      <text x="525" y="42" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#0f172a" text-anchor="middle">KDC AUTHENTICATION SERVER (FastAPI Backend)</text>
+
+      <!-- REST ENDPOINT -->
+      <rect x="325" y="65" width="400" height="42" rx="4" fill="#eff6ff" stroke="#3b82f6" />
+      <text x="335" y="83" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="700" fill="#1e3a8a">API Router: /api/kerberos/as-request</text>
+      <text x="335" y="97" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569">Pydantic KrbAsReq / KrbAsRep Schema Validation | Clock Skew ($\pm 300\text{s}$) Enforcement</text>
+
+      <!-- KDC ENGINE -->
+      <rect x="325" y="118" width="400" height="110" rx="4" fill="#f8fafc" stroke="#94a3b8" />
+      <text x="335" y="136" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="700" fill="#0f172a">KDC Core Service (KdcService in kdc.py)</text>
+      <text x="335" y="152" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#334155">• Principal Normalization: Ensures canonical 'username@CANARA.EDU' format</text>
+      <text x="335" y="167" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#334155">• Session Key Gen: Creates 256-bit cryptographically secure key ($K_{C,TGS}$)</text>
+      <text x="335" y="182" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#334155">• TGT Assembly &amp; Seal: Plaintext TGT encrypted under master key $K_{TGS}$</text>
+      <text x="335" y="197" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#334155">• Client Package Seal: Encrypts session key and nonce echo under client key $K_C$</text>
+      <text x="335" y="212" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#334155">• Telemetry Dispatcher: Emits 8 sanitized progress milestones</text>
+
+      <!-- BOTTOM ROW: CRYPTO & DB -->
+      <rect x="325" y="240" width="190" height="100" rx="4" fill="#f1f5f9" stroke="#64748b" />
+      <text x="420" y="258" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="700" fill="#0f172a" text-anchor="middle">Crypto Subsystem (crypto.py)</text>
+      <text x="420" y="274" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">PBKDF2-HMAC-SHA256 (100k)</text>
+      <text x="420" y="289" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">AES-256-GCM AEAD (128-bit tag)</text>
+      <text x="420" y="304" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">Random 96-bit IV per Operation</text>
+      <text x="420" y="319" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">CSPRNG Session Key &amp; Nonces</text>
+
+      <rect x="535" y="240" width="190" height="100" rx="4" fill="#f1f5f9" stroke="#64748b" />
+      <text x="630" y="258" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="700" fill="#0f172a" text-anchor="middle">KDC Storage (In-Memory DB)</text>
+      <text x="630" y="274" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">alice@CANARA.EDU (password+salt)</text>
+      <text x="630" y="289" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">bob@CANARA.EDU (password+salt)</text>
+      <text x="630" y="304" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">Master TGS Key ($K_{TGS}$ Secret)</text>
+      <text x="630" y="319" font-family="'Segoe UI', sans-serif" font-size="7.5" fill="#dc2626" font-weight="600" text-anchor="middle">Never exposed via API or logs</text>
+    </svg>
+  </div>
+
+  <h3 class="sub-title">2.3 Component Description &amp; Trust Boundaries</h3>
+  <p>
+    <strong>Client Simulator:</strong> Encapsulates user input and request formulation. It has zero knowledge of server master keys or other users' credentials.<br>
+    <strong>KDC Authentication Server:</strong> The authoritative entity containing user accounts and service keys. It generates ephemeral session keys and seals them into ticket structures.<br>
+    <strong>Ticket Granting Service (TGS):</strong> Represented conceptually via the master service key $K_{TGS}$. The TGT issued by the AS can only be decrypted and accepted by the TGS in subsequent protocol phases.
+  </p>
+
+  <div class="page-footer">
+    <div class="left">Canara Engineering College | Dept. of CSE | BCS703</div>
+    <div class="right">Page 3 of 8</div>
+  </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- PAGE 4: KERBEROS AS EXCHANGE WORKFLOW -->
+<!-- ========================================================================== -->
+<div class="report-page" id="page-4">
+  <div class="page-header">
+    <div class="left">Part 3: Kerberos AS Exchange Workflow</div>
+    <div class="right">BCS703 Course Project Report | Group G17</div>
+  </div>
+
+  <h2 class="section-title"><span class="sec-num">3</span>Kerberos AS Exchange Workflow</h2>
+
+  <h3 class="sub-title">3.1 Step-by-Step Execution Sequence</h3>
+  <p>
+    The implemented Authentication Server exchange faithfully models the 8 fundamental telemetry steps defined by the Kerberos V5 specification (RFC 4120), transitioning from client request submission to structured response delivery:
+  </p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width:7%;">Step</th>
+        <th style="width:20%;">Milestone Name</th>
+        <th style="width:43%;">Technical Processing &amp; Cryptographic Actions</th>
+        <th style="width:15%;">Key Utilized</th>
+        <th style="width:15%;">Security Goal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Step 1</strong></td>
+        <td><strong>Request received</strong></td>
+        <td>Client constructs and transmits `KRB_AS_REQ` containing `cname`, `realm`, `sname`, `nonce` ($N_1$), timestamp ($T$), and requested lifetime. No password or hash is sent.</td>
+        <td>None (Cleartext)</td>
+        <td>Identity Assertion</td>
+      </tr>
+      <tr>
+        <td><strong>Step 2</strong></td>
+        <td><strong>Principal validated</strong></td>
+        <td>KDC verifies realm equals `CANARA.EDU`, service equals `krbtgt/CANARA.EDU`, and evaluates clock freshness: $|T_{server} - T_{client}| \le 300\text{s}$.</td>
+        <td>None</td>
+        <td>Replay &amp; Bounds Defense</td>
+      </tr>
+      <tr>
+        <td><strong>Step 3</strong></td>
+        <td><strong>KDC lookup completed</strong></td>
+        <td>Server searches in-memory store. If user exists, server retrieves credential and derives client key $K_C$ via PBKDF2. If absent, exchange halts with `KDC_ERR_C_PRINCIPAL_UNKNOWN`.</td>
+        <td>Derived $K_C$ (PBKDF2)</td>
+        <td>Identity Verification</td>
+      </tr>
+      <tr>
+        <td><strong>Step 4</strong></td>
+        <td><strong>Session key generated</strong></td>
+        <td>KDC generates a fresh 256-bit ephemeral symmetric session key ($K_{C,TGS}$) using a cryptographically secure pseudo-random number generator (`secrets.token_bytes(32)`).</td>
+        <td>None (Ephemeral)</td>
+        <td>Key Freshness</td>
+      </tr>
+      <tr>
+        <td><strong>Step 5</strong></td>
+        <td><strong>TGT constructed</strong></td>
+        <td>Plaintext Ticket Granting Ticket is assembled with fields: `cname`, `sname`, `issue_time`, `expire_time`, and the embedded session key $K_{C,TGS}$.</td>
+        <td>Plaintext Struct</td>
+        <td>Ticket Formatting</td>
+      </tr>
+      <tr>
+        <td><strong>Step 6</strong></td>
+        <td><strong>TGT encrypted</strong></td>
+        <td>TGT structure is encrypted using KDC master service key $K_{TGS}$ via AES-256-GCM with a fresh 96-bit IV. Produces opaque ciphertext with 128-bit integrity tag.</td>
+        <td>Master Key $K_{TGS}$</td>
+        <td>TGT Tamper-Proofing</td>
+      </tr>
+      <tr>
+        <td><strong>Step 7</strong></td>
+        <td><strong>Client response encrypted</strong></td>
+        <td>Client response package containing $K_{C,TGS}$, nonce echo ($N_1$), expiry, and realm is encrypted using derived client key $K_C$ via AES-256-GCM with fresh 96-bit IV.</td>
+        <td>Client Key $K_C$</td>
+        <td>Confidential Key Delivery</td>
+      </tr>
+      <tr>
+        <td><strong>Step 8</strong></td>
+        <td><strong>AS response generated</strong></td>
+        <td>KDC packages encrypted TGT and encrypted client part into final `KRB_AS_REP` structure, appends sanitized telemetry steps, and returns HTTP 200 to client.</td>
+        <td>Structured Transport</td>
+        <td>Response Dispatch</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub-title">3.2 Error Handling &amp; Stepped Failure Progression</h3>
+  <p>
+    A critical pedagogical feature of our simulation is <strong>stepped failure progression</strong>. When an unauthorized principal (e.g., `charlie@CANARA.EDU`) initiates an AS request, the KDC does not produce a generic crash. Instead:
+  </p>
+  <ul>
+    <li><strong>Steps 1 &amp; 2</strong> successfully evaluate to <strong>COMPLETED</strong> because the packet syntax and realm are well-formed.</li>
+    <li><strong>Step 3</strong> flags as <strong>FAILED</strong> with RFC error code `KDC_ERR_C_PRINCIPAL_UNKNOWN` (HTTP 404).</li>
+    <li><strong>Steps 4 through 8</strong> remain strictly in <strong>PENDING</strong> state, visually and logically proving that no session key was minted and no ticket was issued.</li>
+    <li>The frontend Packet Inspector immediately purges any previous successful tickets, preventing stale cache trust.</li>
+  </ul>
+
+  <div class="page-footer">
+    <div class="left">Canara Engineering College | Dept. of CSE | BCS703</div>
+    <div class="right">Page 4 of 8</div>
+  </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- PAGE 5: CRYPTOGRAPHIC IMPLEMENTATION -->
+<!-- ========================================================================== -->
+<div class="report-page" id="page-5">
+  <div class="page-header">
+    <div class="left">Part 3: Cryptographic Implementation</div>
+    <div class="right">BCS703 Course Project Report | Group G17</div>
+  </div>
+
+  <h2 class="section-title"><span class="sec-num">4</span>Cryptographic Implementation</h2>
+
+  <h3 class="sub-title">4.1 Key Derivation Function: PBKDF2-HMAC-SHA256</h3>
+  <p>
+    Standard passwords are vulnerable to dictionary search. In Kerberos, passwords are converted into symmetric cryptographic keys using a string-to-key function. In our simulation, the KDC implements PBKDF2-HMAC-SHA256 according to NIST SP 800-132:
+  </p>
+  <div class="callout-box">
+    <strong>Key Derivation Specification:</strong><br>
+    $\text{Key} = \text{PBKDF2}(\text{PRF}=\text{HMAC-SHA256},\; \text{Password}=\text{UserPassword},\; \text{Salt}=\text{Realm} \mathbin{\Vert} \text{Username},\; c=100{,}000,\; dkLen=32\text{ bytes})$
+  </div>
+  <p>
+    <strong>Security Benefit:</strong> The 100,000 iterations introduce a deliberate computational cost (work factor) of several milliseconds per derivation. While imperceptible during legitimate authentication, it renders offline brute-force and rainbow table attacks computationally intractable for eavesdroppers.
+  </p>
+
+  <h3 class="sub-title">4.2 Authenticated Symmetric Encryption: AES-256-GCM</h3>
+  <p>
+    Older Kerberos specifications (RFC 1510) relied on DES or CBC-mode ciphers requiring separate HMACs. Our implementation utilizes <strong>AES-256-GCM (Galois/Counter Mode)</strong>, an Authenticated Encryption with Associated Data (AEAD) cipher specified in NIST SP 800-38D.
+  </p>
+  <ul>
+    <li><strong>Confidentiality:</strong> Counter (CTR) mode encrypts the ticket payload and client package with 256-bit security.</li>
+    <li><strong>Integrity &amp; Authenticity:</strong> GCM computes a 128-bit GHASH authentication tag over the ciphertext. If an attacker tampers with even a single bit of the encrypted TGT or client payload, decryption fails immediately with an `InvalidTag` exception.</li>
+    <li><strong>Unique IV / Nonce:</strong> Every invocation of `encrypt_aes_gcm()` generates a fresh 96-bit (12-byte) cryptographically secure random nonce via `secrets.token_bytes(12)`. This ensures identical plaintext blocks produce distinct ciphertexts, completely preventing keystream reuse attacks.</li>
+  </ul>
+
+  <h3 class="sub-title">4.3 Nonce Management vs. Multi-Factor Replay Defense</h3>
+  <p>
+    A critical distinction emphasized in this course project is the precise role of nonces in protocol security:
+  </p>
+  <ul>
+    <li><strong>Client Nonce ($N_1$):</strong> A 32-bit cryptographically secure random integer generated by the client (`generate_nonce()`). Its primary purpose is <strong>request-response correlation</strong>—guaranteeing that the `KRB_AS_REP` received matches the immediate `KRB_AS_REQ` submitted.</li>
+    <li><strong>Comprehensive Replay Protection:</strong> In Kerberos, replay defense does <strong>not</strong> rely on the nonce alone. It is achieved through the coordinated operation of four distinct mechanisms: (1) Client nonces, (2) Server-enforced UTC timestamps ($|T_{server} - T_{client}| \le 300\text{s}$), (3) Ticket validity lifetimes ($300\text{s} \le L \le 86400\text{s}$), and (4) Authenticator timestamps in subsequent phases.</li>
+  </ul>
+
+  <h3 class="sub-title">4.4 Cryptographic Parameters Summary Table</h3>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Cryptographic Primitive</th>
+        <th>Algorithm / Standard</th>
+        <th>Parameters / Configuration</th>
+        <th>Operational Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Key Derivation (KDF)</strong></td>
+        <td>PBKDF2-HMAC-SHA256</td>
+        <td>100,000 iterations, 32-byte output, Salt: `Realm + Username`</td>
+        <td>Derive client secret key $K_C$ from user credentials</td>
+      </tr>
+      <tr>
+        <td><strong>Ticket Encryption</strong></td>
+        <td>AES-256-GCM (AEAD)</td>
+        <td>256-bit key ($K_{TGS}$), 96-bit IV, 128-bit tag</td>
+        <td>Seal TGT so client cannot read or modify contents</td>
+      </tr>
+      <tr>
+        <td><strong>Client Package Encryption</strong></td>
+        <td>AES-256-GCM (AEAD)</td>
+        <td>256-bit key ($K_C$), 96-bit IV, 128-bit tag</td>
+        <td>Deliver session key $K_{C,TGS}$ and nonce echo safely</td>
+      </tr>
+      <tr>
+        <td><strong>Session Key Generation</strong></td>
+        <td>CSPRNG (`secrets`)</td>
+        <td>256-bit (32 bytes) cryptographically random, base64</td>
+        <td>Ephemeral symmetric key for Client-TGS communication</td>
+      </tr>
+      <tr>
+        <td><strong>Clock Skew Tolerance</strong></td>
+        <td>UTC Comparison</td>
+        <td>$\pm 300$ seconds ($\pm 5$ minutes) maximum offset</td>
+        <td>Reject stale or replayed authentication requests</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="page-footer">
+    <div class="left">Canara Engineering College | Dept. of CSE | BCS703</div>
+    <div class="right">Page 5 of 8</div>
+  </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- PAGE 6: IMPLEMENTATION & CODE SNIPPETS -->
+<!-- ========================================================================== -->
+<div class="report-page" id="page-6">
+  <div class="page-header">
+    <div class="left">Part 4: Code &amp; Implementation Details</div>
+    <div class="right">BCS703 Course Project Report | Group G17</div>
+  </div>
+
+  <h2 class="section-title"><span class="sec-num">5</span>Implementation &amp; Core Code</h2>
+
+  <h3 class="sub-title">5.1 Request Validation &amp; Clock-Skew Check (`schemas/kerberos.py`)</h3>
+  <div class="code-block"><span class="code-kw">class</span> <span class="code-fn">KrbAsReq</span>(BaseModel):
+    cname: str; realm: str; sname: str; nonce: int; timestamp: str; lifetime: int
+    <span class="code-com"># Enforces strict 300-second clock skew tolerance at the schema boundary</span>
+    <span class="code-kw">@field_validator</span>(<span class="code-str">"timestamp"</span>)
+    <span class="code-kw">def</span> <span class="code-fn">validate_freshness</span>(cls, v: str) -> str:
+        req_time = datetime.fromisoformat(v)
+        skew = abs((datetime.now(timezone.utc) - req_time).total_seconds())
+        <span class="code-kw">if</span> skew > <span class="code-num">300.0</span>:
+            <span class="code-kw">raise</span> ValueError(<span class="code-str">f"Clock skew exceeded: {skew:.1f}s > 300s tolerance"</span>)
+        <span class="code-kw">return</span> v</div>
+  <p><em>Explanation:</em> Utilizes Pydantic V2 to enforce clock skew freshness before requests reach the core service, immediately rejecting replayed or desynchronized requests.</p>
+
+  <h3 class="sub-title">5.2 Principal Lookup &amp; Key Derivation (`services/kdc.py`)</h3>
+  <div class="code-block"><span class="code-kw">def</span> <span class="code-fn">get_client_key</span>(self, cname: str) -> bytes:
+    normalized = self.normalize_principal(cname)
+    <span class="code-kw">if</span> normalized <span class="code-kw">not in</span> self._user_db:
+        <span class="code-kw">raise</span> KerberosPrincipalNotFoundError(<span class="code-str">f"Principal '{cname}' not in KDC database."</span>)
+    user = self._user_db[normalized]
+    <span class="code-kw">return</span> derive_key_from_password(password=user[<span class="code-str">"password"</span>], salt=user[<span class="code-str">"salt"</span>])</div>
+  <p><em>Explanation:</em> Normalizes principal strings, searches the KDC database, raises explicit domain errors for unknown users, and executes PBKDF2 key derivation using the user's password and salt.</p>
+
+  <h3 class="sub-title">5.3 Authenticated Encryption with Fresh IV (`core/crypto.py`)</h3>
+  <div class="code-block"><span class="code-kw">def</span> <span class="code-fn">encrypt_aes_gcm</span>(key: bytes, plaintext_data: Any) -> Tuple[str, str]:
+    raw_bytes = json.dumps(plaintext_data).encode(<span class="code-str">"utf-8"</span>)
+    <span class="code-com"># Fresh, unique 12-byte random IV for every single encryption</span>
+    nonce = secrets.token_bytes(<span class="code-num">12</span>)
+    aesgcm = AESGCM(key)
+    ciphertext_with_tag = aesgcm.encrypt(nonce, raw_bytes, associated_data=<span class="code-kw">None</span>)
+    <span class="code-kw">return</span> base64.b64encode(ciphertext_with_tag).decode(), base64.b64encode(nonce).decode()</div>
+  <p><em>Explanation:</em> Encrypts payload dictionaries using AES-256-GCM. Generates a fresh 96-bit nonce via CSPRNG for every call, preventing keystream reuse and attaching a 128-bit authentication tag.</p>
+
+  <h3 class="sub-title">5.4 Core AS Request Processing Pipeline (`services/kdc.py`)</h3>
+  <div class="code-block"><span class="code-com"># Ephemeral session key generated via CSPRNG (256-bit)</span>
+session_key = generate_session_key()
+<span class="code-com"># Step 6: Encrypt TGT under master K_TGS key (client cannot decrypt)</span>
+tgt_cipher, tgt_iv = encrypt_aes_gcm(self._k_tgs, tgt_content)
+<span class="code-com"># Step 7: Encrypt client response under derived K_C key (contains session key & nonce)</span>
+client_cipher, client_iv = encrypt_aes_gcm(client_key, client_enc_content)
+<span class="code-kw">return</span> KrbAsRep(ticket=EncryptedTicketSchema(cipher_text=tgt_cipher, nonce=tgt_iv),
+                enc_part=EncryptedClientPartSchema(cipher_text=client_cipher, nonce=client_iv))</div>
+  <p><em>Explanation:</em> Demonstrates the central Kerberos duality: the session key is sealed inside the TGT (for TGS) and also sealed inside the client package (for client), allowing shared secret establishment without network exposure.</p>
+
+  <div class="page-footer">
+    <div class="left">Canara Engineering College | Dept. of CSE | BCS703</div>
+    <div class="right">Page 6 of 8</div>
+  </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- PAGE 7: RESULTS & TESTING -->
+<!-- ========================================================================== -->
+<div class="report-page" id="page-7">
+  <div class="page-header">
+    <div class="left">Part 4: Results &amp; Test Verification</div>
+    <div class="right">BCS703 Course Project Report | Group G17</div>
+  </div>
+
+  <h2 class="section-title"><span class="sec-num">6</span>Results &amp; Test Verification</h2>
+
+  <h3 class="sub-title">6.1 Operational Demonstration Scenarios</h3>
+  <p>
+    The implementation was verified on `http://localhost:5173/` integrated with the active FastAPI server (`http://127.0.0.1:8000`). Four distinct verification scenarios were confirmed:
+  </p>
+  <ul>
+    <li><strong>Valid User Authentication (Alice &amp; Bob):</strong> Successful request processing with HTTP 200. All 8 telemetry steps display green `COMPLETED` checks. Packet inspector renders `alice@CANARA.EDU` cleanly with encrypted TGT and client ticket. Bob's authentication generates a distinct 256-bit session key.</li>
+    <li><strong>Unauthorized User Rejection (Charlie):</strong> When `charlie@CANARA.EDU` is submitted, Steps 1–2 pass syntax check, Step 3 flags as red `FAILED`, and Steps 4–8 remain grey `PENDING`. Returns `KDC_ERR_C_PRINCIPAL_UNKNOWN` (HTTP 404). Stale ticket data is completely cleared.</li>
+    <li><strong>Clock Skew Defense:</strong> Requests with timestamp offset $>300\text{s}$ rejected with `KRB_AP_ERR_SKEW` (HTTP 400).</li>
+  </ul>
+
+  <h3 class="sub-title">6.2 Automated Test Suite Results (100% Passing — 21 / 21 Tests)</h3>
+  <p>
+    Verification was conducted using automated test runners across both frontend and backend suites:
+  </p>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Suite</th>
+        <th>Test Target</th>
+        <th>Test Method / Assertion</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Backend</td><td>Valid AS Exchange</td><td>Verifies HTTP 200, ciphertext generation, and 8 telemetry steps</td><td><span class="badge badge-pass">Passed</span></td></tr>
+      <tr><td>Backend</td><td>Unknown Principal</td><td>Asserts HTTP 404 and `KDC_ERR_C_PRINCIPAL_UNKNOWN` for unregistered user</td><td><span class="badge badge-pass">Passed</span></td></tr>
+      <tr><td>Backend</td><td>Unsupported Service</td><td>Rejects service principals other than `krbtgt/CANARA.EDU`</td><td><span class="badge badge-pass">Passed</span></td></tr>
+      <tr><td>Backend</td><td>Stale Timestamp</td><td>Rejects timestamps older than 300 seconds with clock skew error</td><td><span class="badge badge-pass">Passed</span></td></tr>
+      <tr><td>Backend</td><td>Schema Validation</td><td>Rejects negative nonces, invalid lifetimes, and malformed emails</td><td><span class="badge badge-pass">Passed</span></td></tr>
+      <tr><td>Backend</td><td>Decryption Integrity</td><td>Verifies client key successfully decrypts client part; matches session key</td><td><span class="badge badge-pass">Passed</span></td></tr>
+      <tr><td>Backend</td><td>Tamper Detection</td><td>Verifies incorrect key or tampered ciphertext triggers AES `InvalidTag`</td><td><span class="badge badge-pass">Passed</span></td></tr>
+      <tr><td>Backend</td><td>Session Key Uniqueness</td><td>Verifies subsequent requests receive distinct session keys and IVs</td><td><span class="badge badge-pass">Passed</span></td></tr>
+      <tr><td>Backend</td><td>Secret Leakage Check</td><td>Scans raw JSON responses to confirm zero passwords/salts leaked</td><td><span class="badge badge-pass">Passed</span></td></tr>
+      <tr><td>Backend</td><td>Health Check API</td><td>Confirms `/api/health` backward compatibility and course metadata</td><td><span class="badge badge-pass">Passed</span></td></tr>
+      <tr><td>Frontend</td><td>Component Rendering (6)</td><td>Validates Header, Form, 8-step Timeline, Formatter, and Status alerts</td><td><span class="badge badge-pass">Passed</span></td></tr>
+      <tr><td>Frontend</td><td>API Client Service (5)</td><td>Verifies health check, principal fetching, AS exchange, and offline mock</td><td><span class="badge badge-pass">Passed</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub-title">6.3 Proof of Implementation (Live Application Screenshots)</h3>
+  <div class="two-col" style="margin-top: 1mm;">
+    <div style="text-align:center; border:1px solid #cbd5e1; border-radius:3px; padding:1.2mm; background:#f8fafc;">
+      <img src="screenshot_alice.png" style="width:100%; height:52mm; object-fit:contain; border-radius:2px;" alt="Alice Success">
+      <div style="font-size:6.8pt; font-weight:700; color:#1e3a8a; margin-top:0.8mm;">Figure 6.1: Alice Successful AS Exchange (All 8 Steps Completed)</div>
+    </div>
+    <div style="text-align:center; border:1px solid #cbd5e1; border-radius:3px; padding:1.2mm; background:#f8fafc;">
+      <img src="screenshot_charlie.png" style="width:100%; height:52mm; object-fit:contain; border-radius:2px;" alt="Charlie Error">
+      <div style="font-size:6.8pt; font-weight:700; color:#991b1b; margin-top:0.8mm;">Figure 6.2: Charlie Unknown Principal Rejection (Step 3 Failed)</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="left">Canara Engineering College | Dept. of CSE | BCS703</div>
+    <div class="right">Page 7 of 8</div>
+  </div>
+</div>
+
+<!-- ========================================================================== -->
+<!-- PAGE 8: CONCLUSION & FUTURE SCOPE -->
+<!-- ========================================================================== -->
+<div class="report-page" id="page-8">
+  <div class="page-header">
+    <div class="left">Part 4: Conclusion &amp; Future Scope</div>
+    <div class="right">BCS703 Course Project Report | Group G17</div>
+  </div>
+
+  <h2 class="section-title"><span class="sec-num">7</span>Conclusion &amp; Future Scope</h2>
+
+  <h3 class="sub-title">7.1 Project Outcomes &amp; Core Achievements</h3>
+  <p>
+    The Course Project successfully conceptualized, engineered, and verified a transparent, educational full-stack simulation of the Kerberos Authentication Server (AS) Exchange. The system bridges the pedagogical gap between theoretical cryptographic concepts and practical software engineering, providing students and evaluators with complete visual and technical transparency into initial Single Sign-On authentication mechanics.
+  </p>
+
+  <h3 class="sub-title">7.2 Demonstrated Security Principles</h3>
+  <ul>
+    <li><strong>Zero Password Transmission:</strong> Proved that authenticating to a trusted KDC requires no transmission of passwords or password hashes across the network.</li>
+    <li><strong>Work-Factor Resistance:</strong> Implemented PBKDF2-HMAC-SHA256 (100,000 iterations) with salted inputs to neutralize offline dictionary attacks.</li>
+    <li><strong>Tamper-Evident Encryption:</strong> Applied AES-256-GCM authenticated encryption to guarantee that modified tickets raise explicit exceptions (`InvalidTag`).</li>
+    <li><strong>Multi-Factor Replay Defense:</strong> Combined client nonces ($N_1$) for request correlation with strict UTC timestamp windows ($\le 300\text{s}$).</li>
+    <li><strong>Strict Error Isolation:</strong> Handled invalid principals without disclosing cryptographic secrets or emitting false success tickets.</li>
+  </ul>
+
+  <h3 class="sub-title">7.3 Educational Scope Limitations</h3>
+  <p>
+    This project is an <strong>educational simulation</strong> developed for Cryptography &amp; Network Security (BCS703). It utilizes modern RESTful JSON over HTTP instead of legacy binary ASN.1 DER encodings over UDP port 88. User accounts are maintained in memory for demonstration purposes. While cryptographically sound for classroom analysis, it is not intended as an enterprise production replacement for Active Directory or MIT Kerberos.
+  </p>
+
+  <h3 class="sub-title">7.4 Future Scope &amp; Development Roadmap</h3>
+  <ul>
+    <li><strong>Phase 4 — Ticket Granting Server (TGS) Exchange:</strong> Implement `KRB_TGS_REQ` and `KRB_TGS_REP` message handlers where the client presents its TGT and an Authenticator to request end-service tickets.</li>
+    <li><strong>Phase 5 — Client/Server Application (AP) Exchange:</strong> Implement mutual authentication (`KRB_AP_REQ` / `KRB_AP_REP`) between client and target network services (e.g., HTTP / File servers).</li>
+    <li><strong>Public Key Cryptography (PKINIT):</strong> Extend the initial AS exchange with RFC 4556 (PKINIT) to support X.509 digital certificates and asymmetric key pairs.</li>
+  </ul>
+
+  <h3 class="sub-title">7.5 Conclusion</h3>
+  <p>
+    The project fulfills all requirements established by the syllabus for Cryptography &amp; Network Security (BCS703). By integrating industry-standard cryptography (FastAPI, AES-256-GCM, PBKDF2) with an intuitive reactive frontend, the simulation provides an exemplary pedagogical instrument that demystifies complex network security protocols.
+  </p>
+
+  <h3 class="sub-title">7.6 References</h3>
+  <ol style="font-size: 7pt; color: #475569; padding-left: 3.8mm;">
+    <li>Neuman, C., Yu, T., Hartman, S., &amp; Raeburn, K. (2005). <em>The Kerberos Network Authentication Service (V5)</em>. RFC 4120, Internet Engineering Task Force (IETF).</li>
+    <li>National Institute of Standards and Technology (NIST). (2010). <em>Recommendation for Password-Based Key Derivation (PBKDF2)</em>. NIST Special Publication 800-132.</li>
+    <li>Dworkin, M. (2007). <em>Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM)</em>. NIST Special Publication 800-38D.</li>
+    <li>Stallings, W. (2017). <em>Cryptography and Network Security: Principles and Practice</em> (7th ed.). Pearson Education.</li>
+    <li>FastAPI &amp; Pydantic Documentation. (2024). <em>Asynchronous REST Framework and Data Validation for Python</em>. https://fastapi.tiangolo.com</li>
+  </ol>
+
+  <div class="page-footer">
+    <div class="left">Canara Engineering College | Dept. of CSE | BCS703</div>
+    <div class="right">Page 8 of 8</div>
+  </div>
+</div>
+
+</body>
+</html>

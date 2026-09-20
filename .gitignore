@@ -48,3 +48,4 @@ pnpm-debug.log*
 *.swo
 .DS_Store
 Thumbs.db
+frontend_phase1_backup/
