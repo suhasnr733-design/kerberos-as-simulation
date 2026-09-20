@@ -115,11 +115,25 @@ export async function sendASRequest(payload) {
 
       // Handle Pydantic validation errors (HTTP 422)
       if (response.status === 422 && data.detail) {
-        errorCode = 'KRB_AP_ERR_BAD_INTEGRITY';
         if (Array.isArray(data.detail)) {
           errorMessage = data.detail.map((err) => `${err.loc ? err.loc.join('.') : ''}: ${err.msg}`).join('; ');
         } else {
           errorMessage = JSON.stringify(data.detail);
+        }
+
+        const lowerMsg = errorMessage.toLowerCase();
+        if (lowerMsg.includes('skew') || lowerMsg.includes('timestamp')) {
+          errorCode = 'KRB_AP_ERR_SKEW';
+        } else if (lowerMsg.includes('service') || lowerMsg.includes('sname')) {
+          errorCode = 'KDC_ERR_S_PRINCIPAL_UNKNOWN';
+        } else if (lowerMsg.includes('realm')) {
+          errorCode = 'KDC_ERR_WRONG_REALM';
+        } else if (lowerMsg.includes('cname') || lowerMsg.includes('principal')) {
+          errorCode = 'KDC_ERR_C_PRINCIPAL_UNKNOWN';
+        } else if (lowerMsg.includes('nonce') || lowerMsg.includes('lifetime')) {
+          errorCode = 'KDC_ERR_BADOPTION';
+        } else {
+          errorCode = 'KRB_AP_ERR_BAD_INTEGRITY';
         }
       } else if (!errorCode) {
         errorCode = `HTTP_${response.status}`;
@@ -165,6 +179,19 @@ function generateMockASResponse(payload, errorMessage) {
     };
   }
 
+  const normalizedPrincipal = payload.cname.trim().toLowerCase();
+  const knownPrincipals = ['alice@canara.edu', 'bob@canara.edu', 'alice', 'bob'];
+  if (!knownPrincipals.includes(normalizedPrincipal)) {
+    return {
+      success: false,
+      isMock: true,
+      errorCode: 'KDC_ERR_C_PRINCIPAL_UNKNOWN',
+      error: `[MOCK DATA] Client principal '${payload.cname}' not registered in KDC database.`,
+      failedStepNumber: 3,
+      timestamp,
+    };
+  }
+
   if (payload.realm !== 'CANARA.EDU') {
     return {
       success: false,
@@ -195,7 +222,7 @@ function generateMockASResponse(payload, errorMessage) {
     data: {
       msg_type: 'KRB_AS_REP',
       pvno: 5,
-      cname: payload.cname,
+      cname: payload.cname.includes('@') ? `${payload.cname.split('@')[0]}@${payload.realm}` : `${payload.cname}@${payload.realm}`,
       crealm: payload.realm,
       ticket: {
         sname: payload.sname,

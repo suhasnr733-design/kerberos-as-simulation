@@ -16,7 +16,7 @@ export default function ProtocolSteps({ activeStep, stepStatuses, telemetryData,
   // If real telemetry is returned from backend, use backend steps directly
   let stepsToDisplay = DEFAULT_8_STEPS;
 
-  if (telemetryData && telemetryData.length > 0) {
+  if (!hasFailed && telemetryData && telemetryData.length > 0) {
     // Map backend telemetry steps into render format
     stepsToDisplay = DEFAULT_8_STEPS.map((defStep) => {
       const backendStep = telemetryData.find((t) => t.step_number === defStep.step_number);
@@ -32,20 +32,25 @@ export default function ProtocolSteps({ activeStep, stepStatuses, telemetryData,
     });
   } else {
     // Compute status based on activeStep and failure state
+    const failTarget = failedStepNumber || activeStep || 2;
     stepsToDisplay = DEFAULT_8_STEPS.map((step) => {
       let status = 'Pending';
 
       if (stepStatuses && stepStatuses[step.step_number]) {
         status = stepStatuses[step.step_number];
-      } else if (hasFailed && failedStepNumber && step.step_number === failedStepNumber) {
-        status = 'Failed';
-      } else if (hasFailed && step.step_number === activeStep) {
-        status = 'Failed';
+      } else if (hasFailed) {
+        if (step.step_number < failTarget) {
+          status = 'Completed';
+        } else if (step.step_number === failTarget) {
+          status = 'Failed';
+        } else {
+          status = 'Pending';
+        }
       } else if (activeStep !== undefined && activeStep > 0) {
         if (step.step_number < activeStep) {
           status = 'Completed';
         } else if (step.step_number === activeStep) {
-          status = hasFailed ? 'Failed' : 'Processing';
+          status = 'Processing';
         }
       }
 

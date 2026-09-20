@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import ClientRequestForm from '../components/ClientRequestForm';
 import ProtocolSteps from '../components/ProtocolSteps';
 import StatusMessage from '../components/StatusMessage';
+import PacketViewer, { formatPrincipal } from '../components/PacketViewer';
 
 describe('Frontend Component Render Suite', () => {
   it('renders Header with course name and USNs', () => {
@@ -70,5 +71,66 @@ describe('Frontend Component Render Suite', () => {
 
     expect(screen.getByText(/KDC_ERR_C_PRINCIPAL_UNKNOWN/i)).toBeDefined();
     expect(screen.getByText(/Client principal not found/i)).toBeDefined();
+  });
+
+  it('displays dynamic unregistered status and does NOT claim registered when charlie is selected', () => {
+    render(
+      <ClientRequestForm
+        onSubmitRequest={() => {}}
+        isLoading={false}
+        principalsList={['alice@CANARA.EDU', 'bob@CANARA.EDU']}
+        onReset={() => {}}
+      />
+    );
+
+    // Select charlie@CANARA.EDU preset chip
+    const charlieBtn = screen.getByText(/charlie@CANARA.EDU/i);
+    fireEvent.click(charlieBtn);
+
+    // Verify dynamic unregistered warning is shown
+    expect(screen.getByText(/Unregistered principal/i)).toBeDefined();
+    expect(screen.getByText(/KDC_ERR_C_PRINCIPAL_UNKNOWN/i)).toBeDefined();
+
+    // Verify it DOES NOT show the false registered message
+    expect(screen.queryByText('Client identity registered with the KDC database.')).toBeNull();
+  });
+
+  it('correctly formats authenticated principal without duplicating realm', () => {
+    // Direct helper unit tests
+    expect(formatPrincipal('bob@CANARA.EDU@CANARA.EDU', 'CANARA.EDU')).toBe('bob@CANARA.EDU');
+    expect(formatPrincipal('bob@CANARA.EDU', 'CANARA.EDU')).toBe('bob@CANARA.EDU');
+    expect(formatPrincipal('bob', 'CANARA.EDU')).toBe('bob@CANARA.EDU');
+    expect(formatPrincipal('alice@CANARA.EDU@CANARA.EDU')).toBe('alice@CANARA.EDU');
+    expect(formatPrincipal('alice@CANARA.EDU')).toBe('alice@CANARA.EDU');
+
+    // Component render test
+    render(
+      <PacketViewer
+        requestPacket={{
+          cname: 'bob@CANARA.EDU',
+          realm: 'CANARA.EDU',
+          sname: 'krbtgt/CANARA.EDU',
+          nonce: 12345,
+          timestamp: '2026-09-20T10:00:00Z',
+          lifetime: 36000,
+        }}
+        responsePacket={{
+          msg_type: 'KRB_AS_REP',
+          pvno: 5,
+          cname: 'bob@CANARA.EDU@CANARA.EDU',
+          crealm: 'CANARA.EDU',
+          ticket: { sname: 'krbtgt/CANARA.EDU', cipher_b64: 'MOCK' },
+          enc_part: { cipher_b64: 'MOCK' },
+        }}
+        isMock={false}
+        hasFailed={false}
+      />
+    );
+
+    // Both request packet and response packet should have clean 'bob@CANARA.EDU'
+    const principalElements = screen.getAllByText('bob@CANARA.EDU');
+    expect(principalElements.length).toBe(2);
+    // Neither should have duplicate realm
+    expect(screen.queryByText('bob@CANARA.EDU@CANARA.EDU')).toBeNull();
   });
 });

@@ -1,7 +1,18 @@
 import React from 'react';
 import { Eye, Lock, ShieldAlert, CheckCircle, FileCode, Cpu } from 'lucide-react';
 
-export default function PacketViewer({ requestPacket, responsePacket, isMock }) {
+/**
+ * Robustly formats principal to 'username@REALM' without duplicate realm repetitions
+ * (e.g., 'bob@CANARA.EDU@CANARA.EDU' -> 'bob@CANARA.EDU')
+ */
+export function formatPrincipal(cname, crealm = 'CANARA.EDU') {
+  if (!cname) return '';
+  const username = String(cname).split('@')[0].trim();
+  const realm = crealm ? String(crealm).split('@')[0].trim() : 'CANARA.EDU';
+  return `${username}@${realm}`;
+}
+
+export default function PacketViewer({ requestPacket, responsePacket, isMock, hasFailed, errorCode }) {
   return (
     <div className="glass-panel">
       <div className="panel-header">
@@ -96,7 +107,9 @@ export default function PacketViewer({ requestPacket, responsePacket, isMock }) 
                 </div>
                 <div className="packet-field">
                   <span className="packet-key">Authenticated Principal:</span>
-                  <span className="packet-val text-emerald-300">{responsePacket.cname}@{responsePacket.crealm}</span>
+                  <span className="packet-val text-emerald-300">
+                    {formatPrincipal(responsePacket.cname, responsePacket.crealm)}
+                  </span>
                 </div>
                 <div className="packet-field">
                   <span className="packet-key">Encrypted TGT Indicator:</span>
@@ -145,6 +158,20 @@ export default function PacketViewer({ requestPacket, responsePacket, isMock }) 
                   </div>
                 </div>
               </>
+            ) : hasFailed ? (
+              <div className="text-center py-8 px-4">
+                <div className="flex items-center justify-center gap-2 text-rose-400 font-semibold mb-2">
+                  <ShieldAlert size={20} />
+                  <span>No Response Generated — Authentication Rejected</span>
+                </div>
+                <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                  The Kerberos Authentication Server rejected the request with error code{' '}
+                  <code className="text-rose-300 font-mono font-bold bg-rose-950/60 px-1.5 py-0.5 rounded border border-rose-800">
+                    {errorCode || 'KDC_ERROR'}
+                  </code>
+                  . No Ticket Granting Ticket (TGT) or session key was issued.
+                </p>
+              </div>
             ) : (
               <div className="text-center py-8 text-slate-500 text-sm">
                 Awaiting AS Response... Submit request to inspect KRB_AS_REP.

@@ -15,6 +15,16 @@ export default function ClientRequestForm({
   const [lifetime, setLifetime] = useState(36000);
   const [validationError, setValidationError] = useState('');
 
+  // Determine if entered principal is recognized in KDC database
+  const registeredPrincipals = (principalsList && principalsList.length > 0)
+    ? principalsList
+    : ['alice@CANARA.EDU', 'bob@CANARA.EDU'];
+
+  const isRegistered = registeredPrincipals.some(
+    (p) => p.toLowerCase() === cname.trim().toLowerCase() ||
+           p.split('@')[0].toLowerCase() === cname.trim().toLowerCase()
+  );
+
   // Auto-generate Nonce and Timestamp on mount or reset
   const generateFreshNonce = () => {
     // 32-bit positive integer
@@ -102,7 +112,7 @@ export default function ClientRequestForm({
                   className={`preset-chip ${cname === principal ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40' : ''}`}
                 >
                   <UserCheck size={12} className="inline mr-1" />
-                  {principal}
+                  {principal} (Valid)
                 </button>
               ))
             ) : (
@@ -121,15 +131,15 @@ export default function ClientRequestForm({
                 >
                   bob@CANARA.EDU (Valid)
                 </button>
-                <button
-                  type="button"
-                  onClick={() => handlePresetSelect('unknown@CANARA.EDU')}
-                  className="preset-chip text-amber-400"
-                >
-                  unknown@CANARA.EDU (Test 404)
-                </button>
               </>
             )}
+            <button
+              type="button"
+              onClick={() => handlePresetSelect('charlie@CANARA.EDU')}
+              className={`preset-chip text-amber-400 border-amber-800/60 ${cname === 'charlie@CANARA.EDU' ? 'bg-amber-500/20 border-amber-500/50' : ''}`}
+            >
+              charlie@CANARA.EDU (Unknown)
+            </button>
           </div>
         </div>
 
@@ -144,7 +154,21 @@ export default function ClientRequestForm({
               placeholder="e.g. alice@CANARA.EDU"
               required
             />
-            <div className="form-hint">Client identity registered with the KDC database.</div>
+            {!cname.trim() ? (
+              <div className="form-hint text-slate-400">
+                Enter a registered client principal (e.g. alice@CANARA.EDU).
+              </div>
+            ) : isRegistered ? (
+              <div className="form-hint text-emerald-400/90 flex items-center gap-1">
+                <UserCheck size={12} />
+                <span>Registered client principal in KDC database.</span>
+              </div>
+            ) : (
+              <div className="form-hint text-amber-400/90 flex items-center gap-1">
+                <Shield size={12} />
+                <span>Unregistered principal — KDC will reject with KDC_ERR_C_PRINCIPAL_UNKNOWN.</span>
+              </div>
+            )}
           </div>
 
           <div className="grid-2col" style={{ gap: '1rem', marginBottom: '1rem' }}>

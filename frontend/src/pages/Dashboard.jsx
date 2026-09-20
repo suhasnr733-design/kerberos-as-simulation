@@ -83,9 +83,15 @@ export default function Dashboard() {
       // Determine which step failed based on Kerberos error code
       let stepErr = 2;
       if (result.errorCode === 'KDC_ERR_C_PRINCIPAL_UNKNOWN') {
-        stepErr = 3; // Failed during KDC database lookup
-      } else if (result.errorCode === 'KDC_ERR_S_PRINCIPAL_UNKNOWN' || result.errorCode === 'KRB_AP_ERR_SKEW' || result.errorCode === 'KDC_ERR_WRONG_REALM') {
-        stepErr = 2; // Failed during principal/realm validation
+        stepErr = 3; // Failed during KDC database lookup (Step 3)
+      } else if (
+        result.errorCode === 'KDC_ERR_S_PRINCIPAL_UNKNOWN' ||
+        result.errorCode === 'KRB_AP_ERR_SKEW' ||
+        result.errorCode === 'KDC_ERR_WRONG_REALM' ||
+        result.errorCode === 'KDC_ERR_BADOPTION' ||
+        result.errorCode === 'KRB_AP_ERR_BAD_INTEGRITY'
+      ) {
+        stepErr = 2; // Failed during request/principal validation (Step 2)
       }
       setFailedStepNumber(stepErr);
       setActiveStep(stepErr);
@@ -180,6 +186,8 @@ export default function Dashboard() {
         requestPacket={requestPacket}
         responsePacket={responsePacket}
         isMock={statusInfo?.isMock || isMockMode}
+        hasFailed={hasFailed}
+        errorCode={statusInfo?.errorCode}
       />
 
       {/* Footer */}
