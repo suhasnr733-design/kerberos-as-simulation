@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Server, RefreshCw, AlertTriangle, Radio } from 'lucide-react';
+import { ShieldCheck, Server, RefreshCw, AlertTriangle, Activity } from 'lucide-react';
 
 export default function Header({ backendHealth, isCheckingHealth, onRefreshHealth, isMockMode }) {
   const isHealthy = backendHealth && backendHealth.status === 'healthy';
@@ -29,10 +29,12 @@ export default function Header({ backendHealth, isCheckingHealth, onRefreshHealt
         </div>
 
         <div className={`mode-badge ${isMockMode ? 'mock' : 'live'}`}>
-          <span className="flex items-center gap-1">
-            <Radio size={14} className="inline mr-1" />
-            {isMockMode ? 'MOCK DATA MODE' : 'LIVE API MODE'}
-          </span>
+          {isMockMode ? (
+            <AlertTriangle size={13} className="badge-icon" />
+          ) : (
+            <Activity size={13} className="badge-icon" />
+          )}
+          <span>{isMockMode ? 'MOCK DATA MODE' : 'LIVE API MODE'}</span>
         </div>
 
         <button
