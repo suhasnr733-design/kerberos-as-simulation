@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Send, Key, Clock, Shield, RefreshCw, UserCheck } from 'lucide-react';
+import { Send, Key, Clock, Shield, RefreshCw, UserCheck, RotateCcw } from 'lucide-react';
 
 export default function ClientRequestForm({
   onSubmitRequest,
@@ -262,13 +262,13 @@ export default function ClientRequestForm({
             </div>
           )}
 
-          <div className="flex items-center gap-3 mt-4">
+          <div className="form-actions">
             <button
               type="submit"
               disabled={isLoading}
-              className="btn btn-primary flex-1"
+              className="btn btn-primary btn-submit"
             >
-              <Send size={16} />
+              <Send size={16} className="btn-icon" />
               <span>{isLoading ? 'Processing AS Exchange...' : 'Submit KRB_AS_REQ'}</span>
             </button>
 
@@ -279,8 +279,9 @@ export default function ClientRequestForm({
                 generateFreshTimestamp();
                 if (onReset) onReset();
               }}
-              className="btn btn-secondary"
+              className="btn btn-secondary btn-reset"
             >
+              <RotateCcw size={16} className="btn-icon" />
               <span>Reset</span>
             </button>
           </div>

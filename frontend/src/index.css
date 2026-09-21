@@ -278,14 +278,22 @@ code, pre, .font-mono {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: none;
+  border: 1px solid transparent;
   outline: none;
   font-family: inherit;
+  box-sizing: border-box;
+  line-height: 1.25;
+}
+
+.btn-icon {
+  flex-shrink: 0;
+  display: block;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   color: white;
+  border: 1px solid rgba(59, 130, 246, 0.6);
   box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
 }
 
@@ -293,6 +301,11 @@ code, pre, .font-mono {
   background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
   transform: translateY(-1px);
   box-shadow: 0 6px 20px 0 rgba(37, 99, 235, 0.55);
+}
+
+.btn-primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.45);
 }
 
 .btn-accent {
@@ -315,6 +328,12 @@ code, pre, .font-mono {
 .btn-secondary:hover:not(:disabled) {
   background: rgba(51, 65, 85, 0.9);
   border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.3);
 }
 
 .btn-danger {
@@ -332,11 +351,51 @@ code, pre, .font-mono {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none !important;
+  box-shadow: none !important;
 }
 
 .btn-sm {
   padding: 0.35rem 0.75rem;
   font-size: 0.775rem;
+  min-height: 32px;
+}
+
+/* Form Action Buttons (Submit & Reset) */
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  width: 100%;
+}
+
+.form-actions .btn {
+  height: 44px;
+  min-height: 44px;
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1.25rem;
+  white-space: nowrap;
+}
+
+.form-actions .btn-submit {
+  flex: 1;
+}
+
+.form-actions .btn-reset {
+  flex-shrink: 0;
+  padding: 0.65rem 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .form-actions {
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+  .form-actions .btn-submit,
+  .form-actions .btn-reset {
+    width: 100%;
+    flex: none;
+  }
 }
 
 /* Section Layouts */
