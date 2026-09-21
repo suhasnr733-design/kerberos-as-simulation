@@ -153,11 +153,17 @@ export default function Dashboard() {
           <BookOpen size={20} className="text-cyan-400" />
           Kerberos Initial Authentication Server (AS) Exchange
         </h2>
-        <p className="text-sm text-slate-300 leading-relaxed">
-          The <strong>KRB_AS_REQ / KRB_AS_REP</strong> exchange allows a client to authenticate to the Key Distribution Center (KDC)
-          and obtain a <em>Ticket Granting Ticket (TGT)</em> without transmitting plaintext passwords across the network.
-          The AS verifies the client identity in the database, generates a 256-bit ephemeral session key \(K_{'{C,TGS}'}\), encrypts the TGT using the TGS master key \(K_{'{TGS}'}\), and returns the encrypted client part protected by key \(K_C\).
-        </p>
+        <div className="text-sm text-slate-300 leading-relaxed" style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+          <p>
+            The KRB_AS_REQ / KRB_AS_REP exchange is the initial phase of Kerberos authentication. It allows a client to request a Ticket Granting Ticket (TGT) from the Authentication Server (AS) without transmitting plaintext passwords over the network.
+          </p>
+          <p>
+            The AS validates the client's principal and request, generates a fresh 256-bit session key (K_C,TGS), encrypts the TGT using the TGS's long-term secret key (K_TGS), and returns an encrypted client response protected by the client's long-term key (K_C).
+          </p>
+          <p>
+            This project is an educational simulation of the Kerberos AS exchange using REST APIs, JSON, PBKDF2 key derivation, and AES-256-GCM encryption.
+          </p>
+        </div>
       </div>
 
       {/* Main Grid: Form (Left) & Stepper (Right) */}
