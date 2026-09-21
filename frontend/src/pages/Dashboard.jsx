@@ -148,12 +148,12 @@ export default function Dashboard() {
       <StatusMessage statusInfo={statusInfo} />
 
       {/* Overview Cards */}
-      <div className="glass-panel p-6">
-        <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2 mb-3">
+      <div className="glass-panel overview-card">
+        <h2 className="overview-title">
           <BookOpen size={20} className="text-cyan-400" />
           Kerberos Initial Authentication Server (AS) Exchange
         </h2>
-        <div className="text-sm text-slate-300 leading-relaxed" style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+        <div className="overview-description">
           <p>
             The KRB_AS_REQ / KRB_AS_REP exchange is the initial phase of Kerberos authentication. It allows a client to request a Ticket Granting Ticket (TGT) from the Authentication Server (AS) without transmitting plaintext passwords over the network.
           </p>
