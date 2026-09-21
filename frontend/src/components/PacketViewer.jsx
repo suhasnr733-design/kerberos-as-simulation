@@ -29,12 +29,12 @@ export default function PacketViewer({ requestPacket, responsePacket, isMock, ha
         <div className="packet-grid">
           {/* KRB_AS_REQ Panel */}
           <div className="packet-card">
-            <div className="packet-title">
-              <span className="flex items-center gap-2">
-                <FileCode size={16} />
-                KRB_AS_REQ (Client Request)
-              </span>
-              <span className="text-xs px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+            <div className="packet-title packet-header">
+              <div className="packet-header-left">
+                <FileCode size={16} className="packet-header-icon" />
+                <span className="packet-header-title">KRB_AS_REQ (Client Request)</span>
+              </div>
+              <span className="packet-direction-badge badge-outbound">
                 Outbound
               </span>
             </div>
@@ -85,12 +85,12 @@ export default function PacketViewer({ requestPacket, responsePacket, isMock, ha
 
           {/* KRB_AS_REP Panel */}
           <div className="packet-card">
-            <div className="packet-title">
-              <span className="flex items-center gap-2">
-                <Cpu size={16} />
-                KRB_AS_REP (AS Response)
-              </span>
-              <span className="text-xs px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">
+            <div className="packet-title packet-header">
+              <div className="packet-header-left">
+                <Cpu size={16} className="packet-header-icon" />
+                <span className="packet-header-title">KRB_AS_REP (AS Response)</span>
+              </div>
+              <span className="packet-direction-badge badge-inbound">
                 Inbound
               </span>
             </div>
